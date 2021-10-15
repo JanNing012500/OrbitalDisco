@@ -5,19 +5,54 @@ description = `
 
 characters = [
   `
+llllll
+ll l l
+ll l l
+llllll
+ l  l
+ l  l
+  `,//player 
+  `
+llllll
+ll l l
+ll l l
+llllll
+ll  ll
+  `,
+    
+  `
+l ll
+llllll
+  ll l
  llll
+ l  l
+  l  l
+  `, //enemy design 1
+  `
+  ll l
+llllll
+l ll 
+ llll
+ l  l
+l   l,
+  `
+  ,
+  
+  `
+  lll
 ll l l
  llll
  l  l
 ll  ll
-  `,
+`, //enemy design 2
   `
-yyyyyy
-yy y y
-yy y y
-yyyyyy
-yy  yy
-  `
+  lll
+ll l l
+ llll
+  ll
+ l  l
+ l  l
+`,
 ];
 
 //Type
@@ -84,11 +119,11 @@ function update() {
   }
 
   // Spawns the player sprite
-  char("b", player.pos);
+  char("a", player.pos);
 
   // Spawns the dancing sprites
   objs.forEach((o) => {
-    char("a", o.pos);
+    char("c", o.pos);
   });
 
   // Ends the game
