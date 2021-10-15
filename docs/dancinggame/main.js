@@ -5,24 +5,40 @@ description = `
 
 characters = [
   `
-  bbbbbb
-  bbbbbb
-  bbbbbb
-  bbbbbb
-  bbbbbb
+ llll
+ll l l
+ llll
+ l  l
+ll  ll
   `,
   `
-  yyyyyy
-  yyyyyy
-  yyyyyy
-  yyyyyy
-  yyyyyy
+yyyyyy
+yy y y
+yy y y
+yyyyyy
+yy  yy
   `
 ];
+
+//Type
+/**
+ * @typedef {{
+ * pos: Vector
+ * }} Star
+ */
+ 
+/**
+ * @type { Star [] }
+ */
+let stars;
+
+
 const window_size = {
   WIDTH: 150,
   HEIGHT: 90  
 };
+
+
 
 options = {
   theme: 'pixel',
@@ -48,7 +64,23 @@ function update() {
   if (!ticks) {
     // Spawns enemies and players
     spawn_dancers();
+    color("black");
     spawn_player();
+
+  //stars
+    stars = times(40, () => { //number of stars
+                
+      const posX = rnd(0, window_size.WIDTH);
+      const posY = rnd(0, window_size.HEIGHT);
+      
+      return {
+          
+          pos: vec(posX, posY),
+          
+          //speed: rnd(G.STAR_SPEED_MIN, G.STAR_SPEED_MAX)
+      };
+  });
+
   }
 
   // Spawns the player sprite
@@ -66,6 +98,16 @@ function update() {
   remove(objs, (obst) => {
       return true;
   });
+
+  // spawn disco stars
+  stars.forEach((s) => {
+    var starcolors= ["red","green","blue"];
+    var starcolor = starcolors[Math.floor(Math.random()*starcolors.length)];
+     // @ts-ignore
+    color(starcolor);          
+    box(s.pos, 1);   
+  });
+
 }
 
 // Implementation to spawn players
