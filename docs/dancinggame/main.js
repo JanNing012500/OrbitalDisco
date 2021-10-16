@@ -152,8 +152,11 @@ function update() {
   // Spawns the dancing sprites
   objs.forEach((o) => {
     color('black')
-    char("c", o.pos);
-    
+    //char("c", o.pos);
+    const c = char(
+      ticks % 30 > 15 ? "c" : "d",
+      o.pos
+    )
   });
 
 
