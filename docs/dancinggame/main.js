@@ -140,7 +140,11 @@ function update() {
 
   // Spawns the player sprite
   color('yellow');
-  char("a", player.pos);
+  const c = char(
+    ticks % 30 > 15 ? "a" : "b",
+    player.pos
+  )
+  //char("a", player.pos);
 
   // manage spin launch
   manageSpinLaunch()
@@ -149,7 +153,9 @@ function update() {
   objs.forEach((o) => {
     color('black')
     char("c", o.pos);
+    
   });
+
 
   // Ends the game
   //end("Date got lonely");
