@@ -71,7 +71,9 @@ let stars;
 
 const window_size = {
   WIDTH: 150,
-  HEIGHT: 90  
+  HEIGHT: 90,
+  STAR_SPEED_MIN: 0.1,
+  STAR_SPEED_MAX: 0.1
 };
 
 const P = {
