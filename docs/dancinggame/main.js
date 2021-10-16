@@ -59,6 +59,7 @@ ll l l
 /**
  * @typedef {{
  * pos: Vector
+ * speed: number
  * }} Star
  */
  
@@ -122,17 +123,17 @@ function update() {
     color("black");
     spawn_player();
 
-  //stars
-    stars = times(40, () => { //number of stars
+   //stars
+    stars = times(80, () => { //number of stars
                 
       const posX = rnd(0, window_size.WIDTH);
       const posY = rnd(0, window_size.HEIGHT);
-      
+    // An object of type Star with appropriate properties
       return {
-          
+         // Creates a Vector
           pos: vec(posX, posY),
-          
-          //speed: rnd(G.STAR_SPEED_MIN, G.STAR_SPEED_MAX)
+          // More RNG
+          speed: rnd(window_size.STAR_SPEED_MIN, window_size.STAR_SPEED_MAX)
       };
   });
 
@@ -168,14 +169,27 @@ function update() {
   //    return true;
   //});
 
-  // spawn disco stars
+//Star color setup
+    /** @type {Color} */
+  // @ts-ignore
+  const starColor = [
+    "purple", "blue", "green", "red","yellow","black","cyan","white"]
+    [floor(ticks / 5) % 8];
+  color(starColor);
+  
+
+  //Generate stars
   stars.forEach((s) => {
-    var starcolors= ["red","green","blue"];
-    var starcolor = starcolors[Math.floor(Math.random()*starcolors.length)];
-     // @ts-ignore
-    color(starcolor);          
-    box(s.pos, 1);   
+    // Move the star forward
+    s.pos.x += s.speed;
+    // Bring the star back to top once it's past the bottom of the screen
+    if (s.pos.x > window_size.WIDTH) s.pos.x = 0;
+    // Choose a color to draw
+    char( "", s.pos);
+    // Draw the star as a square of size 1
+    box(s.pos, 1);
   });
+
 
 }
 
