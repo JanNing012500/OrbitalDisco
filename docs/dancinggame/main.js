@@ -73,7 +73,10 @@ const window_size = {
   HEIGHT: 90  
 };
 
-
+const P = {
+	LAUNCHSPEED: 5,
+  LAUNCHDECELRATE: .5
+};
 
 options = {
   theme: 'pixel',
@@ -85,7 +88,24 @@ options = {
   seed: 300
 };
 
+//*********************** */
+
+/**
+ * @typedef {{
+ * pos: Vector,
+ * launchStage: number,
+ * cursorTravel: number,
+ * launchDirection: Vector,
+ * currLaunchSpeed: number,
+ * }} Player
+ */
+
+/**
+ * @type { Player }
+ */
 let player;
+
+//*********************** */
 let objs = [];
 let sprite_offset = 5;
 let edge_buffer = 15;
@@ -119,20 +139,25 @@ function update() {
   }
 
   // Spawns the player sprite
+  color('yellow');
   char("a", player.pos);
+
+  // manage spin launch
+  manageSpinLaunch()
 
   // Spawns the dancing sprites
   objs.forEach((o) => {
+    color('black')
     char("c", o.pos);
   });
 
   // Ends the game
-  end("Date got lonely");
+  //end("Date got lonely");
   
   // Removes objects ]
-  remove(objs, (obst) => {
-      return true;
-  });
+  //remove(objs, (obst) => {
+  //    return true;
+  //});
 
   // spawn disco stars
   stars.forEach((s) => {
@@ -149,7 +174,13 @@ function update() {
 function spawn_player() {
   // Picks a random number 1-4 and picks from the premade spawn locations 
   let rnd_spawn = floor(rnd(0,4));
-  player = { pos: spawnpoints[rnd_spawn]}
+  player = {
+    pos: spawnpoints[rnd_spawn], 
+    launchStage: 0, 
+    cursorTravel: 0,
+    launchDirection: vec(0,0),
+    currLaunchSpeed: 0,
+  }
 }
 
 // Spawns the dancers
@@ -179,4 +210,52 @@ function spawn_dancers() {
     sprite_location.pos.clamp(edge_buffer, window_size.WIDTH-edge_buffer, edge_buffer, window_size.HEIGHT-edge_buffer);
     objs.push(sprite_location);
   }
+}
+
+  // draw spin cursor and launch player
+function manageSpinLaunch() {
+  // check if setup is needed
+  if (input.isJustPressed) {
+    player.cursorTravel = rnd(0, 2 * PI);
+    player.launchStage = 1;
+  }
+
+  // calculate cursor's current position
+  player.cursorTravel += .1;
+  let cursorX = sin(player.cursorTravel);
+  let cursorY = cos(player.cursorTravel);
+
+  if (input.isJustReleased) {
+    // set cursor direction as launch direction
+    player.launchDirection = vec(cursorX, cursorY);
+
+    // determine current launch speed with deceleration
+    player.currLaunchSpeed = P.LAUNCHSPEED;
+
+    // set launch stage
+    player.launchStage = 2;
+  } else {
+    // decide action 
+    if (input.isPressed && player.launchStage == 1) {
+      // draw cursor
+      color('yellow');
+      box(player.pos.x + 5 * cursorX + .5, player.pos.y + 5 * cursorY + 1, 1);
+    }
+  }
+
+  if (player.launchStage == 2) {
+    // decel player's current speed
+    player.currLaunchSpeed -= P.LAUNCHDECELRATE;
+
+    // move player based on speed
+    player.pos.x += player.launchDirection.x * player.currLaunchSpeed;
+    player.pos.y += player.launchDirection.y * player.currLaunchSpeed;
+
+    if (player.currLaunchSpeed <= 0) {
+      player.currLaunchSpeed = 0;
+      player.launchStage = 0;
+    }
+  }
+
+  player.pos.clamp(0, window_size.WIDTH, 0, window_size.HEIGHT)
 }
