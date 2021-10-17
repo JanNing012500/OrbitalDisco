@@ -156,6 +156,7 @@ function update() {
     remove(objs, (obst) => {
       return true;
     });
+    play("powerUp");
     ++dancer_count
     addScore(100);
     spawn_dancers(dancer_count);
@@ -178,6 +179,7 @@ function update() {
         return true;
       });
       dancer_count = 10;
+      play("hit");
       end();
     }
   });
