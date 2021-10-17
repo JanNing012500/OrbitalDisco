@@ -159,7 +159,10 @@ function update() {
     const c = char(
       ticks % 30 > 15 ? "c" : "d",
       o.pos
-    )
+    ).isColliding
+    if(c.char.a || c.char.b){
+      end();
+    }
   });
 
 
