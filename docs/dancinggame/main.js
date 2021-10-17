@@ -89,6 +89,7 @@ const P = {
   CURSOROFFSETX: 0.0,
   CURSOROFFSETY: 1.0,
   CURSORSTARTSPEED: 0.1,
+  CURSORSPEEDADD: .02,
   MAXHOLDTIME: 120,
   MAXLAUNCHADD: 4,
   MAXCURSORADD: 2,
@@ -125,6 +126,7 @@ options = {
 let player;
 let dance_partner;
 let dancer_count = 10;
+let level_count = 0;
 //*********************** */
 let objs = [];
 let time = 0;
@@ -138,6 +140,7 @@ function update() {
     spawn_dancers(dancer_count);
     color("black");
     spawn_player();
+    level_count = 0;
 
    //stars
     stars = times(80, () => { //number of stars
@@ -173,6 +176,7 @@ function update() {
     });
     play("powerUp");
     ++dancer_count
+    ++level_count
     addScore(100);
     spawn_dancers(dancer_count);
     spawn_player();
@@ -293,16 +297,16 @@ function manageSpinLaunch() {
     player.cursorTravel = rnd(0, 2 * PI);
     player.launchStage = 1;
     if (player.rotationDirection == 'left')
-    player.rotationDirection = 'right';
-  else
-    player.rotationDirection = 'left';  
+      player.rotationDirection = 'right';
+    else
+      player.rotationDirection = 'left';  
   }
 
   // calculate cursor's current position
   if (player.rotationDirection == 'left')
-    player.cursorTravel += player.cursorSpeed;
+    player.cursorTravel += player.cursorSpeed + P.CURSORSPEEDADD * level_count;
   else
-    player.cursorTravel -= player.cursorSpeed;  
+    player.cursorTravel -= player.cursorSpeed + P.CURSORSPEEDADD * level_count;  
   let cursorX = sin(player.cursorTravel);
   let cursorY = cos(player.cursorTravel);
 
