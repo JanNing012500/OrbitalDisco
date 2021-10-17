@@ -1,6 +1,11 @@
-title = "";
+title = "Orbital Disco";
 
 description = `
+[Click & Hold]
+  to move
+
+Find your
+dance partner
 `;
 
 characters = [
