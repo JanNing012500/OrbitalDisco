@@ -161,6 +161,9 @@ function update() {
       o.pos
     ).isColliding
     if(c.char.a || c.char.b){
+      remove(objs, (obst) => {
+        return true;
+      });
       end();
     }
   });
@@ -170,17 +173,17 @@ function update() {
   //end("Date got lonely");
   
   // Removes objects ]
-  //remove(objs, (obst) => {
+  // remove(objs, (obst) => {
   //    return true;
   //});
 
 //Star color setup
     /** @type {Color} */
   // @ts-ignore
-  const starColor = [
-    "purple", "blue", "green", "red","yellow","black","cyan","white"]
-    [floor(ticks / 5) % 8];
-  color(starColor);
+  // const starColor = [
+  //   "purple", "blue", "green", "red","yellow","black","cyan","white"]
+  //   [floor(ticks / 5) % 8];
+  // color(starColor);
   
 
   //Generate stars
