@@ -137,6 +137,7 @@ let edge_buffer = 15;
 function update() {
   if (!ticks) {
     // Spawns enemies and players
+    console.log("dancers: " + dancer_count);
     spawn_dancers(dancer_count);
     color("black");
     spawn_player();
@@ -170,13 +171,12 @@ function update() {
     player.pos
   ).isColliding
   if(c.char.e||c.char.f) {
-    console.log("yes");
     remove(objs, (obst) => {
       return true;
     });
     play("powerUp");
-    ++dancer_count
-    ++level_count
+    ++dancer_count;
+    ++level_count;
     addScore(100);
     spawn_dancers(dancer_count);
     spawn_player();
@@ -194,9 +194,12 @@ function update() {
       o.pos
     ).isColliding
     if(c.char.a || c.char.b){
+    console.log("obj array b4: " + objs)
       remove(objs, (obst) => {
         return true;
       });
+    console.log("obj array after: " + objs)
+      console.log("dancer_count at end: " + dancer_count);
       dancer_count = 10;
       play("hit");
       end();
@@ -252,7 +255,7 @@ function spawn_player() {
   else if(rnd_spawn == 1) { dance_partner_spawn = spawnpoints[0]; }
   else if(rnd_spawn == 2) { dance_partner_spawn = spawnpoints[3]; }
   else if(rnd_spawn == 3) { dance_partner_spawn = spawnpoints[2]; }
-  console.log(dance_partner_spawn);
+  // console.log(dance_partner_spawn);
   dance_partner = {
     pos: dance_partner_spawn
   };
@@ -317,10 +320,10 @@ function manageSpinLaunch() {
     // determine current launch speed based on hold time
     let holdTimeRatio = player.holdTime/P.MAXHOLDTIME;
     player.currLaunchSpeed = P.LAUNCHSPEED + P.MAXLAUNCHADD * holdTimeRatio;
-    console.log('holdTime: ' + player.holdTime);
-    console.log('MAXHOLDTIME: ' + P.MAXHOLDTIME);
-    console.log('MAXLAUNCHADD: ' + P.MAXLAUNCHADD);
-    console.log(P.MAXLAUNCHADD * holdTimeRatio);
+    // console.log('holdTime: ' + player.holdTime);
+    // console.log('MAXHOLDTIME: ' + P.MAXHOLDTIME);
+    // console.log('MAXLAUNCHADD: ' + P.MAXLAUNCHADD);
+    // console.log(P.MAXLAUNCHADD * holdTimeRatio);
     
     // set launch stage
     player.launchStage = 2;
