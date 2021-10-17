@@ -53,6 +53,12 @@ ll l l
  l  l
  l  l
 `,
+`
+yyyyyyyyy
+yyyyyyyyy
+yyyyyyyyy
+yyyyyyyyy
+`
 ];
 
 //Type
@@ -107,21 +113,19 @@ options = {
  * @type { Player }
  */
 let player;
-
+let dance_partner;
+let dancer_count = 10;
 //*********************** */
 let objs = [];
+let time = 0;
 let sprite_offset = 5;
 let edge_buffer = 15;
-const spawnpoints = [ vec(window_size.WIDTH/2, window_size.HEIGHT - sprite_offset), 
-                      vec(window_size.WIDTH/2, 0+sprite_offset),
-                      vec(0+sprite_offset, window_size.HEIGHT/2),
-                      vec(window_size.WIDTH-sprite_offset, window_size.HEIGHT/2), ];
 
 
 function update() {
   if (!ticks) {
     // Spawns enemies and players
-    spawn_dancers();
+    spawn_dancers(dancer_count);
     color("black");
     spawn_player();
 
@@ -141,13 +145,26 @@ function update() {
 
   }
 
+  // Spawns the dancing partner
+  color('blue');
+  char("g", dance_partner.pos);
+
   // Spawns the player sprite
   color('yellow');
   const c = char(
     ticks % 30 > 15 ? "a" : "b",
     player.pos
-  )
-  //char("a", player.pos);
+  ).isColliding
+  if(c.char.g) {
+    console.log("yes");
+    remove(objs, (obst) => {
+      return true;
+    });
+    ++dancer_count
+    addScore(100);
+    spawn_dancers(dancer_count);
+    spawn_player();
+  }
 
   // manage spin launch
   manageSpinLaunch()
@@ -164,26 +181,18 @@ function update() {
       remove(objs, (obst) => {
         return true;
       });
+      dancer_count = 10;
       end();
     }
   });
 
-
-  // Ends the game
-  //end("Date got lonely");
-  
-  // Removes objects ]
-  // remove(objs, (obst) => {
-  //    return true;
-  //});
-
 //Star color setup
     /** @type {Color} */
   // @ts-ignore
-  // const starColor = [
-  //   "purple", "blue", "green", "red","yellow","black","cyan","white"]
-  //   [floor(ticks / 5) % 8];
-  // color(starColor);
+  const starColor = ["purple", "blue", "green", "red","yellow","black","cyan","white"] [floor(time / 5) % 8];
+  color(starColor);
+  if(ticks != undefined && ticks >= 0) time = ticks;
+  
   
 
   //Generate stars
@@ -204,6 +213,11 @@ function update() {
 // Implementation to spawn players
 function spawn_player() {
   // Picks a random number 1-4 and picks from the premade spawn locations 
+  const spawnpoints = [ vec(window_size.WIDTH/2, window_size.HEIGHT - sprite_offset), 
+                        vec(window_size.WIDTH/2, 0+sprite_offset),
+                        vec(0+sprite_offset, window_size.HEIGHT/2),
+                        vec(window_size.WIDTH-sprite_offset, window_size.HEIGHT/2), ];
+
   let rnd_spawn = floor(rnd(0,4));
   player = {
     pos: spawnpoints[rnd_spawn], 
@@ -211,12 +225,25 @@ function spawn_player() {
     cursorTravel: 0,
     launchDirection: vec(0,0),
     currLaunchSpeed: 0,
-  }
+  };
+
+  let dance_partner_spawn;
+  if(rnd_spawn == 0) { dance_partner_spawn = spawnpoints[1]; }
+  else if(rnd_spawn == 1) { dance_partner_spawn = spawnpoints[0]; }
+  else if(rnd_spawn == 2) { dance_partner_spawn = spawnpoints[3]; }
+  else if(rnd_spawn == 3) { dance_partner_spawn = spawnpoints[2]; }
+  console.log(dance_partner_spawn);
+  dance_partner = {
+    pos: dance_partner_spawn
+  };
 }
 
+// function spawn_partner() {  
+// }
+
 // Spawns the dancers
-function spawn_dancers() {
-  let number_of_dancers = 10;
+function spawn_dancers(dancer_count) {
+  let number_of_dancers = dancer_count;
   for(let i = 0; i < number_of_dancers; ++i) {
 
     // Pick a random x and y location to spawn dancers
@@ -289,4 +316,6 @@ function manageSpinLaunch() {
   }
 
   player.pos.clamp(0, window_size.WIDTH, 0, window_size.HEIGHT)
+  // time++;
+  // console.log(time);
 }
