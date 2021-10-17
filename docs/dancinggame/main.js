@@ -77,9 +77,17 @@ const window_size = {
   STAR_SPEED_MAX: 0.1
 };
 
+// special Player constant variables
 const P = {
-	LAUNCHSPEED: 5,
-  LAUNCHDECELRATE: .5
+	LAUNCHSPEED: 3,
+  LAUNCHDECELRATE: .5,
+  CURSORDISTANCE: 7,
+  CURSOROFFSETX: 0.0,
+  CURSOROFFSETY: 1.0,
+  CURSORSTARTSPEED: 0.1,
+  MAXHOLDTIME: 120,
+  MAXLAUNCHADD: 4,
+  MAXCURSORADD: 2,
 };
 
 options = {
@@ -101,6 +109,9 @@ options = {
  * cursorTravel: number,
  * launchDirection: Vector,
  * currLaunchSpeed: number,
+ * rotationDirection: string,
+ * cursorSpeed: number,
+ * holdTime: number,
  * }} Player
  */
 
@@ -223,7 +234,10 @@ function spawn_player() {
     cursorTravel: 0,
     launchDirection: vec(0,0),
     currLaunchSpeed: 0,
-  };
+    rotationDirection: 'left',
+    cursorSpeed: P.CURSORSTARTSPEED,
+    holdTime: 0,
+  }
 
   let dance_partner_spawn;
   if(rnd_spawn == 0) { dance_partner_spawn = spawnpoints[1]; }
@@ -268,16 +282,23 @@ function spawn_dancers(dancer_count) {
   }
 }
 
-  // draw spin cursor and launch player
+// draw spin cursor and launch player
 function manageSpinLaunch() {
   // check if setup is needed
   if (input.isJustPressed) {
     player.cursorTravel = rnd(0, 2 * PI);
     player.launchStage = 1;
+    if (player.rotationDirection == 'left')
+    player.rotationDirection = 'right';
+  else
+    player.rotationDirection = 'left';  
   }
 
   // calculate cursor's current position
-  player.cursorTravel += .1;
+  if (player.rotationDirection == 'left')
+    player.cursorTravel += player.cursorSpeed;
+  else
+    player.cursorTravel -= player.cursorSpeed;  
   let cursorX = sin(player.cursorTravel);
   let cursorY = cos(player.cursorTravel);
 
@@ -285,17 +306,41 @@ function manageSpinLaunch() {
     // set cursor direction as launch direction
     player.launchDirection = vec(cursorX, cursorY);
 
-    // determine current launch speed with deceleration
-    player.currLaunchSpeed = P.LAUNCHSPEED;
-
+    // determine current launch speed based on hold time
+    let holdTimeRatio = player.holdTime/P.MAXHOLDTIME;
+    player.currLaunchSpeed = P.LAUNCHSPEED + P.MAXLAUNCHADD * holdTimeRatio;
+    console.log('holdTime: ' + player.holdTime);
+    console.log('MAXHOLDTIME: ' + P.MAXHOLDTIME);
+    console.log('MAXLAUNCHADD: ' + P.MAXLAUNCHADD);
+    console.log(P.MAXLAUNCHADD * holdTimeRatio);
+    
     // set launch stage
     player.launchStage = 2;
+
+    // reset holdTime
+    player.holdTime = 0;
   } else {
     // decide action 
     if (input.isPressed && player.launchStage == 1) {
+      // store hold time
+      player.holdTime++;
+      player.holdTime = clamp(player.holdTime, 0, P.MAXHOLDTIME);
+      let holdTimeRatio = player.holdTime/P.MAXHOLDTIME;
+      
+      // decide cursor size
+      let cursorSize = (P.MAXCURSORADD * holdTimeRatio) + 1;
+
+      // decide cursor color
+      if (holdTimeRatio < .40) {
+        color('green');
+      } else if (holdTimeRatio < .93) {
+        color('yellow');
+      } else {
+        color('red');
+      }
+
       // draw cursor
-      color('yellow');
-      box(player.pos.x + 5 * cursorX + .5, player.pos.y + 5 * cursorY + 1, 1);
+      box(player.pos.x + P.CURSORDISTANCE * cursorX + P.CURSOROFFSETX, player.pos.y + P.CURSORDISTANCE * cursorY + P.CURSOROFFSETY, cursorSize);
     }
   }
 
@@ -313,7 +358,5 @@ function manageSpinLaunch() {
     }
   }
 
-  player.pos.clamp(0, window_size.WIDTH, 0, window_size.HEIGHT)
-  // time++;
-  // console.log(time);
+  player.pos.clamp(0+3, window_size.WIDTH-3, 3, window_size.HEIGHT-3)
 }
