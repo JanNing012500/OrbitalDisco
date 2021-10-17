@@ -10,19 +10,19 @@ dance partner
 
 characters = [
   `
+  ll l
 llllll
-ll l l
-ll l l
+l ll
 llllll
- l  l
- l  l
+l    l
   `,//player 
   `
+l ll 
 llllll
-ll l l
-ll l l
-llllll
-ll  ll
+  ll l
+  ll
+ l  l
+l    l
   `,
     
   `
@@ -42,23 +42,22 @@ l ll
 l   l,
   `
   ,
-  
   `
-  lll
-ll l l
+l ll l
+llllll
+  ll
  llll
  l  l
 ll  ll
-`, //enemy design 2
+  `, //target
   `
-  lll
-ll l l
- llll
+  ll 
+llllll
+l ll l
   ll
- l  l
- l  l
-`,
-
+  ll
+ llll
+  `
 ];
 
 //Type
