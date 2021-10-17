@@ -53,12 +53,7 @@ ll l l
  l  l
  l  l
 `,
-`
-yyyyyyyyy
-yyyyyyyyy
-yyyyyyyyy
-yyyyyyyyy
-`
+
 ];
 
 //Type
@@ -147,7 +142,8 @@ function update() {
 
   // Spawns the dancing partner
   color('blue');
-  char("g", dance_partner.pos);
+  char( ticks % 30 > 15 ? "e" : "f",
+    dance_partner.pos);
 
   // Spawns the player sprite
   color('yellow');
@@ -155,7 +151,7 @@ function update() {
     ticks % 30 > 15 ? "a" : "b",
     player.pos
   ).isColliding
-  if(c.char.g) {
+  if(c.char.e||c.char.f) {
     console.log("yes");
     remove(objs, (obst) => {
       return true;
